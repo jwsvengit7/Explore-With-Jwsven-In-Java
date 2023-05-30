@@ -7,7 +7,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -15,14 +14,12 @@ import org.springframework.web.client.RestTemplate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 import static com.example.mongodbapi.api.API.getApiUrl;
 
 @Service
 @RequiredArgsConstructor
 public class ServiceApiImplementation implements ServiceApi {
-    private final ModelMapper modelMapper;
     private final RestTemplate restTemplate;
     private final HttpHeaders headers;
     @Override
@@ -65,7 +62,7 @@ public class ServiceApiImplementation implements ServiceApi {
         result.stream()
                 .filter(c -> c.getMarket_cap_rank() == capRank)
                 .findFirst();
-        String response = result.stream().map(RequestFromCoins::getId).toString();
+        String response = result.stream().map(RequestFromCoins::getId).findFirst().get();
         return ApiResponse.builder()
                 .message("rank uploaded")
                 .localDateTime(LocalDateTime.now())

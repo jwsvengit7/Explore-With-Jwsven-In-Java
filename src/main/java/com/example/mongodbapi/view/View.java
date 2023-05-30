@@ -1,7 +1,7 @@
 package com.example.mongodbapi.view;
 
 import com.example.mongodbapi.service.Impl.ServiceApiImplementation;
-import org.modelmapper.ModelMapper;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.client.RestTemplate;
 
@@ -19,7 +19,7 @@ public class View implements Runnable {
 
     @Override
     public void run()  {
-        ServiceApiImplementation serviceApiImplementation = new ServiceApiImplementation(new ModelMapper(), new RestTemplate(), new HttpHeaders());
+        ServiceApiImplementation serviceApiImplementation = new ServiceApiImplementation(new RestTemplate(), new HttpHeaders());
         System.out.println(serviceApiImplementation.getCoinByName("bitcoin"));
 
         try {

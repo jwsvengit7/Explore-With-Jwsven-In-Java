@@ -1,8 +1,9 @@
 package com.example.mongodbapi.request;
 
-import lombok.Data;
+import lombok.*;
 @Data
-
+@AllArgsConstructor
+@NoArgsConstructor
 public class RequestFromCoins {
 
     private String id;
@@ -33,4 +34,8 @@ public class RequestFromCoins {
     private String last_updated;
 
 
+    public RequestFromCoins(String bitcoin, String btc) {
+        this.id=bitcoin;
+        this.symbol=btc;
+    }
 }
