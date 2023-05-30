@@ -50,6 +50,7 @@ public class ServiceApiImplementation implements ServiceApi {
                      return c.getId().equals(coin);
                 }).toList();
     }
+    @Override
     public String getValueByRank(int capRank) {
         Optional<RequestFromCoins> result = getAllAPI().stream()
                 .filter(c -> c.getMarket_cap_rank() == capRank)
