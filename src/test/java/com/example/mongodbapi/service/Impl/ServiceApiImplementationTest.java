@@ -2,12 +2,8 @@ package com.example.mongodbapi.service.Impl;
 
 import com.example.mongodbapi.request.RequestFromCoins;
 import com.example.mongodbapi.response.ApiResponse;
-import com.example.mongodbapi.view.View;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -18,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -60,7 +57,6 @@ class ServiceApiImplementationTest {
         }
 
 
-
     @Test
     void getCoinByName() {
         List<RequestFromCoins> mockResponse = List.of(
@@ -84,9 +80,52 @@ class ServiceApiImplementationTest {
 
     @Test
     void getValueByRank() {
+        List<RequestFromCoins> mockResponse = List.of(
+                new RequestFromCoins("Bitcoin", "BTC", 1),
+                new RequestFromCoins("Ethereum", "ETH", 2),
+                new RequestFromCoins("Ripple", "XRP", 3)
+        );
+
+        when(serviceApiImplementation.getAllAPI()).thenReturn(mockResponse);
+
+        int capRank = 2;
+
+        Optional<RequestFromCoins> expectedCoin = mockResponse.stream()
+                .filter(c -> c.getMarket_cap_rank() == capRank)
+                .findFirst();
+
+        ApiResponse expectedApiResponse = ApiResponse.builder()
+                .message("rank uploaded")
+                .localDateTime(LocalDateTime.now())
+                .data(expectedCoin.get().getId())
+                .build();
+
+        ApiResponse apiResponse = serviceApiImplementation.getValueByRank(capRank);
+
+        assertEquals(expectedApiResponse, apiResponse);
+        verify(serviceApiImplementation, times(1)).getAllAPI();
     }
 
     @Test
     void getCoinByHighestPrice() {
+
+        List<RequestFromCoins> mockResponse = List.of(
+                new RequestFromCoins("Bitcoin", "BTC", 50000),
+                new RequestFromCoins("Ethereum", "ETH", 3500),
+                new RequestFromCoins("Ripple", "XRP", 1)
+        );
+
+        when(serviceApiImplementation.getAllAPI()).thenReturn(mockResponse);
+
+        ApiResponse expectedApiResponse = ApiResponse.builder()
+                .message("rank uploaded")
+                .localDateTime(LocalDateTime.now())
+                .data(mockResponse)
+                .build();
+
+        ApiResponse apiResponse = serviceApiImplementation.getCoinByHighestPrice();
+
+        assertEquals(expectedApiResponse, apiResponse);
+        verify(serviceApiImplementation, times(1)).getAllAPI();
     }
 }

@@ -38,4 +38,10 @@ public class RequestFromCoins {
         this.id=bitcoin;
         this.symbol=btc;
     }
+
+    public RequestFromCoins(String bitcoin, String btc, float v) {
+        this.id=bitcoin;
+        this.symbol=btc;
+        this.current_price=v;
+    }
 }
