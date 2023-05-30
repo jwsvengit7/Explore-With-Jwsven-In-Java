@@ -1,17 +1,18 @@
 package com.example.mongodbapi.service.Impl;
 
 import com.example.mongodbapi.request.RequestFromCoins;
+import com.example.mongodbapi.response.ApiResponse;
 import com.example.mongodbapi.service.ServiceApi;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.json.JSONParser;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -40,29 +41,48 @@ public class ServiceApiImplementation implements ServiceApi {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
+
         return api;
     }
 
     @Override
-    public List<RequestFromCoins> getCoinByName(String coin) {
-       return getAllAPI().stream()
+    public ApiResponse getCoinByName(String coin) {
+        List<RequestFromCoins> response = getAllAPI();
+        response.stream()
                 .filter(c-> {
                      return c.getId().equals(coin);
                 }).toList();
+
+        return ApiResponse.builder()
+                .message("rank uploaded")
+                .localDateTime(LocalDateTime.now())
+                .data(response)
+                .build();
     }
     @Override
-    public String getValueByRank(int capRank) {
-        Optional<RequestFromCoins> result = getAllAPI().stream()
+    public ApiResponse getValueByRank(int capRank) {
+        List<RequestFromCoins>  result =  getAllAPI();
+        result.stream()
                 .filter(c -> c.getMarket_cap_rank() == capRank)
                 .findFirst();
-        return result.map(RequestFromCoins::getId).orElse(null);
+        String response = result.stream().map(RequestFromCoins::getId).toString();
+        return ApiResponse.builder()
+                .message("rank uploaded")
+                .localDateTime(LocalDateTime.now())
+                .data(response)
+                .build();
     }
 
     @Override
-    public List<RequestFromCoins> getCoinByHighestPrice() {
-        return getAllAPI().stream()
+    public ApiResponse getCoinByHighestPrice() {
+        List<RequestFromCoins> response =  getAllAPI().stream()
                 .sorted(Comparator.comparingDouble(RequestFromCoins::getCurrent_price).reversed())
                 .toList();
+        return ApiResponse.builder()
+                .message("rank uploaded")
+                .localDateTime(LocalDateTime.now())
+                .data(response)
+                .build();
     }
 
 
